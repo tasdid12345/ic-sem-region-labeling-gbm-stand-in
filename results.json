@@ -1,0 +1,30 @@
+{
+  "question": "Can a class-balanced, CV-tuned LightGBM classifier beat a standard MLP at labelling image regions on a public image-segmentation dataset, as a stand-in for SEM metal-line segmentation?",
+  "method": "Single stratified 75/25 split (seed 42); MLP baseline vs class-balanced LightGBM with CV-selected hyper-parameters on the training set; test macro-F1 averaged over seeds 42-44.",
+  "dataset": {
+    "name": "UCI Image Segmentation (OpenML 36: segment)",
+    "source_url": "https://www.openml.org/d/36",
+    "n_rows": 2310,
+    "n_train": 1732,
+    "n_test": 578,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "macro-F1 (test set)",
+  "higher_is_better": true,
+  "baseline": "StandardScaler + scikit-learn MLPClassifier (one hidden layer of 100 units), untuned.",
+  "improved": "LightGBM with class_weight='balanced'; num_leaves, learning_rate and min_child_samples chosen by 5-fold stratified CV on the training split only; refit per seed.",
+  "metrics": {
+    "baseline_score": 0.9720129196369035,
+    "improved_score": 0.9812072884616629,
+    "improvement": 0.009194368824759436,
+    "baseline_score_std": 0.0008417630961983935,
+    "improved_score_std": 5.790154648676091e-06,
+    "baseline_accuracy": 0.9717416378316033,
+    "improved_accuracy": 0.9809688581314879,
+    "baseline_logloss": 0.13470266355920102,
+    "improved_logloss": 0.09699560899661462,
+    "improved_cv_macro_f1": 0.9849773800108149
+  },
+  "notes": "Stand-in dataset: the paper's SEM images and annotations are not public, so this tests only the general question of a balanced gradient-boosted model vs an MLP on small tabular region labels. Only the LightGBM is tuned (8-point grid, 5-fold CV on the training split); the MLP is the untuned standard baseline, so the comparison is not compute-matched in tuning. Single 75/25 split: test estimates carry split-level uncertainty; '_std' is across model seeds only. Selected LightGBM params: {'learning_rate': 0.05, 'min_child_samples': 5, 'num_leaves': 15}. Log-loss is computed on predicted probabilities without calibration. The paper's ESD error rates are not comparable to macro-F1."
+}
