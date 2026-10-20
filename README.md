@@ -25,6 +25,27 @@ Requires internet access to openml.org. Runs on CPU in well under a minute.
 
 Results are written to `results.json` (and a chart to `figures/macro_f1.png`).
 
+## Results (latest run)
+
+On the public UCI Image Segmentation dataset (OpenML 36), a standard scikit-learn MLP classifier reached 97.2% macro-F1 on the held-out test set, while my class-balanced LightGBM with CV-tuned hyperparameters reached 98.1%, a small gain from a single 75/25 split.
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.972 |
+| improved_score | 0.9812 |
+| improvement | 0.009194 |
+| baseline_score_std | 0.0008418 |
+| improved_score_std | 0.00000579 |
+| baseline_accuracy | 0.9717 |
+| improved_accuracy | 0.981 |
+| baseline_logloss | 0.1347 |
+| improved_logloss | 0.097 |
+| improved_cv_macro_f1 | 0.985 |
+
+Run on 2026-10-20. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Stand-in dataset: the paper's SEM images and annotations are not public, so this tests only the general question of a balanced gradient-boosted model vs an MLP on small tabular region labels. Only the LightGBM is tuned (8-point grid, 5-fold CV on the training split); the MLP is the untuned standard baseline, so the comparison is not compute-matched in tuning. Single 75/25 split: test estimates carry split-level uncertainty; '_std' is across model seeds only. Selected LightGBM params: {'learning_rate': 0.05, 'min_child_samples': 5, 'num_leaves': 15}. Log-loss is computed on predicted probabilities without calibration. The paper's ESD error rates are not comparable to macro-F1.
+
 ## Reference
 
 This project is motivated by the following paper:
